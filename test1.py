@@ -1,7 +1,7 @@
 import re
 import json
 from pprint import pprint
-
+import os
 
 def find_url(strings: list):
 	regex = r"(?i)\b((?:http?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
@@ -46,3 +46,7 @@ result = {"http_urls": get_http_urls_from_file(js_file),
 	"internal_endpoints": get_endpoints_from_file(js_file)}
 
 pprint(result)
+
+
+out = os.popen('npm outdated').read()
+print("NPM OUTDATED PACKAGE LIST :\n", out)
