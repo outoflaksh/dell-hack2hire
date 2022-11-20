@@ -71,19 +71,6 @@ def loadfile(file:str):
         data=regexchecker(code_base)
         fin[file] = data
         print(file, fin[file])
-        # try:
-            
-        #     print(file,re.findall(r".get\(\"(.*?)\"", code_base))
-        # except:
-        #     print("Error")
-        # print(code_base)
-        # get_endpoints_from_file(file)
-        # get_http_urls_from_file(file)
-        # get_external_libraries_from_file(file)
-        # result = {"http_urls": get_http_urls_from_file(file), 
-	    # "external_libraries": get_external_libraries_from_file(file), 
-	    # "internal_endpoints": get_endpoints_from_file(file)}
-        # print(result)
 
 
 
