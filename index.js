@@ -7,10 +7,10 @@ app.get("/", (req, res) => {
   res.json({ msg: "hello" });
 });
 
-app.get("/weather/:city", (req, res) => {
-  const city = req.params.city;
+app.get("/pokemon/:name", (req, res) => {
+  const name = req.params.name;
   const response = axios
-    .get("https://pokeapi.co/api/v2/pokemon/ditto")
+    .get(`https://pokeapi.co/api/v2/pokemon/${name}`)
     .then(function (response) {
       res.json(response.data);
     });
