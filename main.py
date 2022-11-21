@@ -2,6 +2,8 @@ import re
 import json
 from pprint import pprint
 import os, pathlib
+from collections import Counter
+
 
 
 def find_url(strings: list):
@@ -107,6 +109,17 @@ def generate_doc_for_file(file_name):
 		"api_keys": get_api_keys_from_file(file_name),
     }
 
+def count_files_type():
+	counts = Counter()
+	for c_dir, dirs, files in os.walk("."):
+		for file in files:
+			before, ext = os.path.splitext(file)
+			counts[ext] += 1
+	return {
+		"total_files": sum(counts.values()),
+		"files_type": counts
+	}
+
 
 def generate_doc_for_codebase(codebase_path, config_file_name):
     config_file_path = f"{codebase_path}/{config_file_name}"
@@ -138,7 +151,6 @@ def generate_doc_for_codebase(codebase_path, config_file_name):
                 else:
                     file_list.append(os.path.join(dirPath, fileName))
                     
-
     doc = {
         "files": {},
         "outdated_packages": get_outdated_packages(codebase_path),
