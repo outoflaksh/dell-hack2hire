@@ -43,6 +43,18 @@ def get_endpoints_from_file(file_name: str):
 	return internal_endpoints
 
 
+# Temporary way for finding outdated packages
+def get_outdated_packages():
+	raw_result = os.popen("npm outdated").read().split()[7:]
+	result = []
+	
+	for i in range(0, len(raw_result), 6):
+		print(i)
+		result.append({"pkg_name": raw_result[i], "curr_version": raw_result[i+1], "latest_version": raw_result[i+3]})
+	
+	return result
+
+
 js_file = "./index.js"
 config_file = "./package.json"
 
@@ -50,12 +62,10 @@ config_file = "./package.json"
 result = {
 	"http_urls": get_http_urls_from_file(js_file), 
 	"external_libraries": get_external_libraries_from_file(config_file), 
-	"internal_endpoints": get_endpoints_from_file(js_file)
+	"internal_endpoints": get_endpoints_from_file(js_file),
+	"outdated_packages": get_outdated_packages()
 	}
 
 
 pprint(result)
 
-
-# out = os.popen('npm outdated').read()
-# print(out.split())
