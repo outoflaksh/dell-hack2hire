@@ -1,7 +1,7 @@
 import re
 import json
 from pprint import pprint
-import os
+import os, pathlib
 
 
 def find_url(strings: list):
@@ -78,18 +78,59 @@ def get_database_info(config_file_name):
     return result
 
 
-js_file = "./sample-express-codebase/index.js"
-config_file = "./sample-express-codebase/package.json"
+def generate_doc_for_file(file_name):
+    return {
+        "http_urls": get_http_urls_from_file(file_name),
+        "internal_endpoints": get_endpoints_from_file(file_name),
+    }
+
+
+def generate_doc_for_codebase(codebase_path, config_file_name):
+    config_file_path = f"{codebase_path}/{config_file_name}"
+
+    blacklisted_folders = [
+        "node_modules",
+        "venv",
+        ".git",
+        ".vscode",
+        "__pycache__",
+        "vendor",
+    ]
+
+    file_list = []
+
+    for dirPath, dirNames, fileNames in os.walk(codebase_path):
+        if any(folder in dirPath for folder in blacklisted_folders):
+            continue
+        else:
+            for fileName in fileNames:
+                if pathlib.Path(fileName).suffix == ".js":
+                    file_list.append(os.path.join(dirPath, fileName))
+
+    doc = {
+        "files": {},
+        "outdated_packages": get_outdated_packages(codebase_path),
+        "database": get_database_info(config_file_path),
+        "external_libraries": get_external_libraries_from_file(config_file_path),
+    }
+
+    for file in file_list:
+        doc["files"][file] = generate_doc_for_file(file)
+
+    doc["total_files_scanned"] = len(file_list)
+
+    with open("integration_doc.json", "w+") as f:
+        f.write(json.dumps(doc, indent=4))
+
+    return doc
+
+
+config_file_name = "package.json"
 parent_dir = "./sample-express-codebase"
 
 
-result = {
-    "http_urls": get_http_urls_from_file(js_file),
-    "external_libraries": get_external_libraries_from_file(config_file),
-    "internal_endpoints": get_endpoints_from_file(js_file),
-    "outdated_packages": get_outdated_packages(parent_dir),
-    "database": get_database_info(config_file),
-}
-
-
-pprint(result)
+pprint(
+    generate_doc_for_codebase(
+        codebase_path=parent_dir, config_file_name=config_file_name
+    )
+)
