@@ -123,14 +123,3 @@ def generate_doc_for_codebase(codebase_path, config_file_name):
         f.write(json.dumps(doc, indent=4))
 
     return doc
-
-
-config_file_name = "package.json"
-parent_dir = "./sample-express-codebase"
-
-
-pprint(
-    generate_doc_for_codebase(
-        codebase_path=parent_dir, config_file_name=config_file_name
-    )
-)
