@@ -3,69 +3,75 @@ import json
 from pprint import pprint
 import os
 
+
 def find_url(strings: list):
-	regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
-	urls = []
-	
-	for line, string in enumerate(strings):
-		url = re.findall(regex,string)
-		if url:
-			line_url = [line+1, [x[0] for x in url]]
-			urls.append(line_url)
+    regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+    urls = []
 
-	return urls
+    for line, string in enumerate(strings):
+        url = re.findall(regex, string)
+        if url:
+            line_url = [line + 1, [x[0] for x in url]]
+            urls.append(line_url)
+
+    return urls
 
 
-def get_http_urls_from_file(file_name: str): 
-	with open(file_name, "r+") as f:
-		code_base: str = f.read()
+def get_http_urls_from_file(file_name: str):
+    with open(file_name, "r+") as f:
+        code_base: str = f.read()
 
-	return find_url(list(code_base.split('\n')))
+    return find_url(list(code_base.split("\n")))
 
 
 def get_external_libraries_from_file(config_file_name: str):
-	with open(config_file_name, "rb+") as f:
-		config_file = json.load(f)
+    with open(config_file_name, "rb+") as f:
+        config_file = json.load(f)
 
-	return config_file["dependencies"]
+    return config_file["dependencies"]
 
 
 def get_endpoints_from_file(file_name: str):
-	with open(file_name, "r+") as f:
-		code_base: str = f.read()
+    with open(file_name, "r+") as f:
+        code_base: str = f.read()
 
-	internal_endpoints = {}
-	internal_endpoints["get"] = list(re.findall(r"app.get\(\"(.*?)\"", code_base))
-	internal_endpoints["post"] = list(re.findall(r"app.post\(\"(.*?)\"", code_base))
-	internal_endpoints["delete"] = list(re.findall(r"app.delete\(\"(.*?)\"", code_base))
-	internal_endpoints["put"] = list(re.findall(r"app.put\(\"(.*?)\"", code_base))
+    internal_endpoints = {}
+    internal_endpoints["get"] = list(re.findall(r"app.get\(\"(.*?)\"", code_base))
+    internal_endpoints["post"] = list(re.findall(r"app.post\(\"(.*?)\"", code_base))
+    internal_endpoints["delete"] = list(re.findall(r"app.delete\(\"(.*?)\"", code_base))
+    internal_endpoints["put"] = list(re.findall(r"app.put\(\"(.*?)\"", code_base))
 
-	return internal_endpoints
+    return internal_endpoints
 
 
 # Temporary way for finding outdated packages
-def get_outdated_packages():
-	raw_result = os.popen("npm outdated").read().split()[7:]
-	result = []
-	
-	for i in range(0, len(raw_result), 6):
-		print(i)
-		result.append({"pkg_name": raw_result[i], "curr_version": raw_result[i+1], "latest_version": raw_result[i+3]})
-	
-	return result
+def get_outdated_packages(parent_dir):
+    raw_result = os.popen(f"cd {parent_dir} && npm outdated").read().split()[7:]
+    result = []
+
+    for i in range(0, len(raw_result), 6):
+        result.append(
+            {
+                "pkg_name": raw_result[i],
+                "curr_version": raw_result[i + 1],
+                "latest_version": raw_result[i + 3],
+            }
+        )
+
+    return result
 
 
-js_file = "./index.js"
-config_file = "./package.json"
+js_file = "./sample-express-codebase/index.js"
+config_file = "./sample-express-codebase/package.json"
+parent_dir = "./sample-express-codebase"
 
 
 result = {
-	"http_urls": get_http_urls_from_file(js_file), 
-	"external_libraries": get_external_libraries_from_file(config_file), 
-	"internal_endpoints": get_endpoints_from_file(js_file),
-	"outdated_packages": get_outdated_packages()
-	}
+    "http_urls": get_http_urls_from_file(js_file),
+    "external_libraries": get_external_libraries_from_file(config_file),
+    "internal_endpoints": get_endpoints_from_file(js_file),
+    "outdated_packages": get_outdated_packages(parent_dir),
+}
 
 
 pprint(result)
-
