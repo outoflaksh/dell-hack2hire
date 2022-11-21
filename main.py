@@ -61,6 +61,23 @@ def get_outdated_packages(parent_dir):
     return result
 
 
+def get_database_info(config_file_name):
+    dependencies = set(
+        get_external_libraries_from_file(config_file_name=config_file_name).keys()
+    )
+    result = {"mongo": False, "sql": False}
+
+    mongo_clients: set = {"mongoose", "mongodb"}
+    if mongo_clients.intersection(dependencies):
+        result["mongo"] = True
+
+    sql_clients: set = {"sequelize", "typeorm", "prisma"}
+    if sql_clients.intersection(dependencies):
+        result["sql"] = True
+
+    return result
+
+
 js_file = "./sample-express-codebase/index.js"
 config_file = "./sample-express-codebase/package.json"
 parent_dir = "./sample-express-codebase"
@@ -71,6 +88,7 @@ result = {
     "external_libraries": get_external_libraries_from_file(config_file),
     "internal_endpoints": get_endpoints_from_file(js_file),
     "outdated_packages": get_outdated_packages(parent_dir),
+    "database": get_database_info(config_file),
 }
 
 
