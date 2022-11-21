@@ -96,6 +96,12 @@ def generate_doc_for_codebase(codebase_path, config_file_name):
         "__pycache__",
         "vendor",
     ]
+    blacklisted_files = [
+		"package-lock.json",
+		"requirements.txt",
+		".gitignore",
+	]
+
 
     file_list = []
 
@@ -104,8 +110,11 @@ def generate_doc_for_codebase(codebase_path, config_file_name):
             continue
         else:
             for fileName in fileNames:
-                if pathlib.Path(fileName).suffix == ".js":
+                if any (file in fileName for file in blacklisted_files):
+                    continue
+                else:
                     file_list.append(os.path.join(dirPath, fileName))
+                    
 
     doc = {
         "files": {},
