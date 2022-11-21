@@ -16,4 +16,8 @@ app.get("/pokemon/:name", (req, res) => {
     });
 });
 
+app.post("/pokemon/add", (req, res) => {
+  const poke_name = req.body.poke_name;
+});
+
 app.listen(8000);
