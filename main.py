@@ -3,6 +3,9 @@ import json
 from pprint import pprint
 import os, pathlib
 from collections import Counter
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def find_url(strings: list):
@@ -18,48 +21,6 @@ def find_url(strings: list):
     return urls
 
 
-def find_apikeys(strings: list):
-    regex1 = [
-        r"AIza[0-9A-Za-z-_]{35}",
-        r"key-[0-9a-zA-Z]{32}",
-        r"[h|H][e|E][r|R][o|O][k|K][u|U].{0,30}[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}",
-        r"(xox[p|b|o|a]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
-        r"https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}",
-        r"[0-9a-f]{32}-us[0-9]{1,2}",
-        r"EAACEdEose0cBA[0-9A-Za-z]+]",
-        r"(?i)(facebook|fb)(.{0,20})?(?-i)['\\\"][0-9a-f]{32}['\\\"]",
-        r"(?i)(facebook|fb)(.{0,20})?['\\\"][0-9]{13,17}['\\\"]",
-        r"(?i)twitter(.{0,20})?['\\\"][0-9a-z]{35,44}['\\\"]",
-        r"(?i)twitter(.{0,20})?['\\\"][0-9a-z]{18,25}['\\\"]",
-        r"ghp_[0-9a-zA-Z]{36}",
-        r"gho_[0-9a-zA-Z]{36}",
-        r"(ghu|ghs)_[0-9a-zA-Z]{36}",
-        r"ghr_[0-9a-zA-Z]{76}",
-        r"(?i)linkedin(.{0,20})?(?-i)[0-9a-z]{12}",
-        r"(?i)linkedin(.{0,20})?[0-9a-z]{16}",
-        r"[a-zA-Z0-9_-]*:[a-zA-Z0-9_-]+@github\\.com*",
-        r"rk_live_[0-9a-zA-Z]{24}",
-        r"sk_live_[0-9a-zA-Z]{24}",
-        r"sqOatp-[0-9A-Za-z\\-_]{22}",
-        r"ya29\\.[0-9A-Za-z\\-_]+",
-        r"[0-9(+-[0-9A-Za-z_]{32}.apps.googleusercontent.com",
-        r"(A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}",
-        r"(?i)aws(.{0,20})?(?-i)['\\\"][0-9a-zA-Z\/+]{40}['\\\"]",
-        r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
-    ]
-
-    apikeys = []
-
-    for line, string in enumerate(strings):
-        for regex in regex1:
-            apikey = re.findall(regex, string)
-            if apikey:
-                line_apikey = [line + 1, [x for x in apikey]]
-                apikeys.append(line_apikey)
-
-    return apikeys
-
-
 def get_http_urls_from_file(file_name: str):
     with open(file_name, "r+") as f:
         code_base: str = f.read()
@@ -67,11 +28,20 @@ def get_http_urls_from_file(file_name: str):
     return find_url(list(code_base.split("\n")))
 
 
-def get_api_keys_from_file(file_name):
-    with open(file_name, "r+") as f:
-        code_base: str = f.read()
+def get_api_keys_from_files(file_list):
+    to_scan = []
+    for file_name in file_list:
+        with open(file_name, "r+") as f:
+            code_base: str = f.read()
+        to_scan.append({"filename": file_name, "document": code_base})
 
-    return find_apikeys(list(code_base.split("\n")))
+    GG_API_KEY = os.getenv("GITGUARDIAN_API_KEY")
+    from pygitguardian import GGClient
+
+    client = GGClient(api_key=GG_API_KEY)
+    scan_result = client.multi_content_scan(to_scan)
+
+    return scan_result.to_dict()
 
 
 def get_external_libraries_from_file(config_file_name: str):
@@ -180,6 +150,7 @@ def generate_doc_for_codebase(codebase_path, config_file_name):
         "database": get_database_info(config_file_path),
         "external_libraries": get_external_libraries_from_file(config_file_path),
         "files_present": count_files_type(codebase_path=codebase_path),
+        "secret_scan": get_api_keys_from_files(file_list),
     }
 
     for file in file_list:
