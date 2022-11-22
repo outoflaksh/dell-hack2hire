@@ -63,6 +63,22 @@ def get_endpoints_from_file(file_name: str):
 
     return internal_endpoints
 
+def get_protocols_from_file(file_name: str):
+    with open(file_name, "r+") as f:
+        code_base: str = f.read()
+
+    protocols = {}
+    protocols["http"] = list(re.findall(r"http://(.*?)\"", code_base))
+    protocols["https"] = list(re.findall(r"https://(.*?)\"", code_base))
+    protocols["ftp"] = list(re.findall(r"ftp://(.*?)\"", code_base))
+    protocols["sftp"] = list(re.findall(r"sftp://(.*?)\"", code_base))
+    protocols["ssh"] = list(re.findall(r"ssh://(.*?)\"", code_base))
+    protocols["smtp"] = list(re.findall(r"smtp://(.*?)\"", code_base))
+    protocols["pop3"] = list(re.findall(r"pop3://(.*?)\"", code_base))
+    protocols["imap"] = list(re.findall(r"imap://(.*?)\"", code_base))
+    
+
+    return protocols
 
 # Temporary way for finding outdated packages
 def get_outdated_packages(parent_dir):
@@ -102,6 +118,7 @@ def generate_doc_for_file(file_name):
     return {
         "http_urls": get_http_urls_from_file(file_name),
         "internal_endpoints": get_endpoints_from_file(file_name),
+        "protocols": get_protocols_from_file(file_name),
         # "api_keys": get_api_keys_from_file(file_name),
     }
 
