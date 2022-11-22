@@ -124,8 +124,18 @@ def generate_doc_for_file(file_name):
 
 
 def count_files_type(codebase_path):
+    blacklisted_folders = [
+        "node_modules",
+        "venv",
+        ".git",
+        ".vscode",
+        "__pycache__",
+        "vendor",
+    ]
     counts = Counter()
     for c_dir, dirs, files in os.walk(codebase_path):
+        if any(x in c_dir for x in blacklisted_folders):
+            continue
         for file in files:
             before, ext = os.path.splitext(file)
             counts[ext] += 1
