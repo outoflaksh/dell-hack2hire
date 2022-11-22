@@ -1,9 +1,4 @@
-<div id="top"></div>
-[![Contributors][contributors-shield]][contributors-url]
-
-
-
-<!-- PROJECT LOGO -->
+<div id="top"></div><!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="https://github.com/outoflaksh/skeleton">
