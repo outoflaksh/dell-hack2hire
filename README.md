@@ -45,7 +45,6 @@
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -54,9 +53,17 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+Skeleton helps development teams connect and work with each other better without having to know anything about the other's codebase. Imagine two different teams, working on different services. What if Team A wants to integrate with Team B's application? They would need to know the entire integration architecture of Team B's app. This is where Skeleton comes in!
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email`, `email_client`, `project_title`, `project_description`
+With Skeleton, Team A can instantly and automatically generate a whole document containing all the information needed to connect with Team B's codebase.
+
+Skeleton provides the following information in the document:
+1. All instances of external HTTP APIs.
+2. All the different external libraries and modules being used.
+3. All internal endpoints that Team A can use to connect to Team B.
+4. Security scan for loose API keys and secrets.
+5. Scan results for any outdated libraries and packages.
+6. Scan results for other protocols like FTP, SFTP, and more!
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -117,10 +124,9 @@ Make sure to have Node.js and Python installed on your system.
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Support for more languages and frameworks.
+- [ ] More in-depth security scans.
+- [ ] A more comprehensive description of all the different endpoints. 
 
 See the [open issues](https://github.com/outoflaksh/skeleton/issues) for a full list of proposed features (and known issues).
 
@@ -158,22 +164,13 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Lakshya Malik - @outoflaksh (Twitter, GitHub, Instagram)
 
 Project Link: [https://github.com/outoflaksh/skeleton](https://github.com/outoflaksh/skeleton)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 
